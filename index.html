@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Liquid Glass Effect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-content">
+        <h1>Liquid Glass</h1>
+        <p>This is a demonstration of a liquid glass distortion effect created using only CSS and an inline SVG filter. No JavaScript is used.</p>
+        <p>The effect is achieved by applying a CSS `backdrop-filter` to the top element, which uses an SVG `<feTurbulence>` filter to create the distortion. The turbulence is then animated using a standard CSS `@keyframes` animation to create the "liquid" movement.</p>
+    </div>
+
+    <liquid-glass-element></liquid-glass-element>
+
+    <script type="module" src="liquid-glass-element.js"></script>
+    <script>
+        const liquidGlass = document.querySelector('liquid-glass-element');
+
+        document.addEventListener('mousemove', (e) => {
+            // Calculate the center of the liquid-glass div
+            const x = e.clientX - liquidGlass.offsetWidth / 2;
+            const y = e.clientY - liquidGlass.offsetHeight / 2;
+
+            liquidGlass.style.left = `${x}px`;
+            liquidGlass.style.top = `${y}px`;
+        });
+    </script>
+</body>
+</html>

@@ -9,24 +9,31 @@
 <body>
 
     <div class="background-content">
-        <h1>Liquid Glass</h1>
-        <p>This is a demonstration of a liquid glass distortion effect created using only CSS and an inline SVG filter. No JavaScript is used.</p>
-        <p>The effect is achieved by applying a CSS `backdrop-filter` to the top element, which uses an SVG `<feTurbulence>` filter to create the distortion. The turbulence is then animated using a standard CSS `@keyframes` animation to create the "liquid" movement.</p>
+        <h1>Liquid Glass Element</h1>
+        <p>This page demonstrates a customizable "liquid glass" effect using a Custom Web Component.</p>
+
+        <h2>Customization</h2>
+        <p>Use the <code>&lt;liquid-glass-element&gt;</code> tag. Customize its appearance by the following attributes:</p>
+        <ul>
+            <li><code>width</code> & <code>height</code>: The dimensions of the element.</li>
+            <li><code>radius</code>: The corner roundness.</li>
+            <li><code>shadow-opacity</code> & <code>shadow-blur</code>: Controls the underlying shadow.</li>
+            <li><code>highlight-opacity</code> & <code>highlight-blur</code>: Controls the top highlight.</li>
+            <li><code>glass-opacity</code> & <code>glass-blur</code>: Controls the main glass body's transparency and blur.</li>
+            <li><code>pre-blur</code> & <code>post-blur</code>: Fine-tunes the blur before and after the distortion.</li>
+            <li><code>chromatic-aberration</code>: Creates a color-fringing effect at the edges.</li>
+        </ul>
     </div>
 
-    <liquid-glass-element></liquid-glass-element>
+    <liquid-glass-element width="300" height="300" radius="150" style="position: absolute; transform: translate(-50%, -50%); top: 50%; left: 50%;"></liquid-glass-element>
 
     <script type="module" src="liquid-glass-element.js"></script>
     <script>
         const liquidGlass = document.querySelector('liquid-glass-element');
 
         document.addEventListener('mousemove', (e) => {
-            // Calculate the center of the liquid-glass div
-            const x = e.clientX - liquidGlass.offsetWidth / 2;
-            const y = e.clientY - liquidGlass.offsetHeight / 2;
-
-            liquidGlass.style.left = `${x}px`;
-            liquidGlass.style.top = `${y}px`;
+            liquidGlass.style.left = `${e.clientX - 45}px`;
+            liquidGlass.style.top = `${e.clientY - 45}px`;
         });
     </script>
 </body>

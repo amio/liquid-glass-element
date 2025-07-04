@@ -25,15 +25,15 @@
         </ul>
     </div>
 
-    <liquid-glass-element width="400" height="400" radius="100" style="position: absolute; transform: translate(-50%, -50%); top: 50%; left: 50%;"></liquid-glass-element>
+    <liquid-glass-element width="300" height="300" radius="100" style="position: absolute; transform: translate(-50%, -50%); top: 50%; left: 50%;"></liquid-glass-element>
 
     <script type="module" src="liquid-glass-element.js"></script>
     <script>
         const liquidGlass = document.querySelector('liquid-glass-element');
 
         document.addEventListener('mousemove', (e) => {
-            liquidGlass.style.left = `${e.clientX - 45}px`;
-            liquidGlass.style.top = `${e.clientY - 45}px`;
+            liquidGlass.style.left = `${e.clientX}px`;
+            liquidGlass.style.top = `${e.clientY}px`;
         });
     </script>
 </body>

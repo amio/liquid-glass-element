@@ -88,7 +88,7 @@ class LiquidGlassElement extends HTMLElement {
             <feComposite in2="clipMaskLayer" operator="in"/>
 
             <!-- Step 7: Apply a final offset (optional, for 3D-like effects) -->
-            <feOffset dx="43" dy="43"/>
+            <!-- <feOffset dx="0" dy="0"/> -->
           </filter>
         </svg>
       </div>
@@ -166,7 +166,7 @@ class LiquidGlassElement extends HTMLElement {
     highlightLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='rgb%28255 255 255 %2F${highlightOpacity/2.55}%25%29' style='filter:blur(${highlightBlur}px)' /%3E%3C/svg%3E`);
     clipMaskLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='%23000' /%3E%3C/svg%3E`);
     displacementMapLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradient1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%2300F'/%3E%3C/linearGradient%3E%3ClinearGradient id='gradient2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%230F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='${width}' height='${height}' rx='${radius}' fill='%237F7F7F' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='%23000' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='url(%23gradient1)' style='mix-blend-mode: screen' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='url(%23gradient2)' style='mix-blend-mode: screen' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='rgb%28127 127 127 %2F${(255-glassOpacity)/2.55}%25%29' style='filter:blur(${20-glassBlur}px)' /%3E%3C/svg%3E`);
-    
+
     // Update blur values
     preblur.setAttribute("stdDeviation", `${preDistortionBlur/10}`);
     postblur.setAttribute("stdDeviation", `${postDistortionBlur/10}`);

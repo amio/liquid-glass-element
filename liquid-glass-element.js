@@ -30,10 +30,12 @@ class LiquidGlassElement extends HTMLElement {
         #preview {
           width:200px;
           height:200px;
+          /* The backdrop-filter applies the SVG filter to the content behind the element */
           backdrop-filter:url(#displacementFilter4)/* brightness(0.95)*/;
           pointer-events: none;
         }
         #effectSvg{
+          /* The SVG filter definition is hidden from view */
           position:absolute;
           top:-999px;
           left:-999px
@@ -42,24 +44,50 @@ class LiquidGlassElement extends HTMLElement {
       <div id="preview"></div>
       <div style="position:absolute;top:-999px;left:-999px">
         <svg id="effectSvg" width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <!--
+            The SVG filter works by taking the background content (SourceGraphic),
+            distorting it, and then blending it with several generated layers to create
+            the final glass effect.
+          -->
           <filter id="displacementFilter4">
-            <feImage xlink:href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%230001' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23FFF' style='filter:blur(5px)' /%3E%3C/svg%3E" x="0%" y="0%" width="100%" height="100%" result="thing9" id="thing9" />
-            <feImage xlink:href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23FFF1' style='filter:blur(15px)' /%3E%3C/svg%3E" x="0%" y="0%" width="100%" height="100%" result="thing0" id="thing0" />
-            <feImage xlink:href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23000' /%3E%3C/svg%3E" x="0%" y="0%" width="100%" height="100%" result="thing1" id="thing1" />
-            <feImage xlink:href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradient1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%2300F'/%3E%3C/linearGradient%3E%3ClinearGradient id='gradient2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%230F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='200' height='200' rx='25' fill='%237F7F7F' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23000' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='url(%23gradient1)' style='mix-blend-mode: screen' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='url(%23gradient2)' style='mix-blend-mode: screen' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%237F7F7FBB' style='filter:blur(5px)' /%3E%3C/svg%3E" x="0%" y="0%" width="100%" height="100%" result="thing2" id="thing2" />
+            <!-- Layer 1: A dark, blurred shape to create a shadow/depth effect -->
+            <feImage xlink:href="data:image/svg+xml,..." result="shadowLayer" id="shadowLayer" />
+            <!-- Layer 2: A light, blurred shape to create a highlight effect -->
+            <feImage xlink:href="data:image/svg+xml,..." result="highlightLayer" id="highlightLayer" />
+            <!-- Layer 3: A solid shape used as a mask to clip the final output -->
+            <feImage xlink:href="data:image/svg+xml,..." result="clipMaskLayer" id="clipMaskLayer" />
+            <!-- Layer 4: A complex gradient used as the displacement map. The color values of this image will shift the pixels of the SourceGraphic. -->
+            <feImage xlink:href="data:image/svg+xml,..." result="displacementMapLayer" id="displacementMapLayer" />
+
+            <!-- Step 1: Apply an initial blur to the background content (SourceGraphic) -->
             <feGaussianBlur stdDeviation="0.7" id="preblur" in="SourceGraphic" result="preblur" />
-            <feDisplacementMap id="dispR" in2="thing2" in="preblur" scale="-148" xChannelSelector="B" yChannelSelector="G" />
-            <feColorMatrix type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="disp1" />
-            <feDisplacementMap id="dispG" in2="thing2" in="preblur" scale="-150" xChannelSelector="B" yChannelSelector="G" />
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="disp2" />
-            <feDisplacementMap id="dispB" in2="thing2" in="preblur" scale="-152" xChannelSelector="B" yChannelSelector="G" />
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="disp3" />
+
+            <!-- Step 2: Create chromatic aberration by displacing R, G, and B channels separately -->
+            <!-- Displace the Red channel -->
+            <feDisplacementMap id="dispR" in2="displacementMapLayer" in="preblur" scale="-148" xChannelSelector="B" yChannelSelector="G" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="disp1" />
+            <!-- Displace the Green channel -->
+            <feDisplacementMap id="dispG" in2="displacementMapLayer" in="preblur" scale="-150" xChannelSelector="B" yChannelSelector="G" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="disp2" />
+            <!-- Displace the Blue channel -->
+            <feDisplacementMap id="dispB" in2="displacementMapLayer" in="preblur" scale="-152" xChannelSelector="B" yChannelSelector="G" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="disp3" />
+
+            <!-- Step 3: Blend the displaced color channels back together -->
             <feBlend in2="disp2" mode="screen"/>
             <feBlend in2="disp1" mode="screen"/>
+
+            <!-- Step 4: Apply an optional post-distortion blur -->
             <feGaussianBlur stdDeviation="0.0" id="postblur" />
-            <feBlend in2="thing0" mode="screen"/>
-            <feBlend in2="thing9" mode="multiply"/>
-            <feComposite in2="thing1" operator="in"/>
+
+            <!-- Step 5: Blend the highlight and shadow layers -->
+            <feBlend in2="highlightLayer" mode="screen"/>
+            <feBlend in2="shadowLayer" mode="multiply"/>
+
+            <!-- Step 6: Clip the final result to the mask shape -->
+            <feComposite in2="clipMaskLayer" operator="in"/>
+
+            <!-- Step 7: Apply a final offset (optional, for 3D-like effects) -->
             <feOffset dx="43" dy="43"/>
           </filter>
         </svg>
@@ -86,24 +114,37 @@ class LiquidGlassElement extends HTMLElement {
       vals[attributes[i].name] = attributes[i].value;
     }
 
-    const w = vals.width || 200;
-    const h = vals.height || 200;
-    const r = vals.radius || 25;
-    const d1 = vals['shadow-opacity'] || 17;
-    const d2 = vals['shadow-blur'] || 5;
-    const l1 = vals['highlight-opacity'] || 17;
-    const l2 = vals['highlight-blur'] || 15;
-    const c1 = vals['glass-opacity'] || 68;
-    const c2 = vals['glass-blur'] || 15;
-    const b1 = vals['pre-blur'] || 7;
-    const b2 = vals['post-blur'] || 0;
-    const c4 = vals['chromatic-aberration'] || 20;
+    // --- Component Properties ---
+    // Geometry
+    const width = vals.width || 200; // The width of the element
+    const height = vals.height || 200; // The height of the element
+    const radius = vals.radius || 25; // The corner radius of the glass shape
 
+    // Shadow Layer
+    const shadowOpacity = vals['shadow-opacity'] || 17; // Opacity of the dark shadow layer (0-255)
+    const shadowBlur = vals['shadow-blur'] || 5;    // Blur radius of the shadow layer
+
+    // Highlight Layer
+    const highlightOpacity = vals['highlight-opacity'] || 17; // Opacity of the light highlight layer (0-255)
+    const highlightBlur = vals['highlight-blur'] || 15;   // Blur radius of the highlight layer
+
+    // Glass Body
+    const glassOpacity = vals['glass-opacity'] || 68; // Opacity of the main glass body (0-255)
+    const glassBlur = vals['glass-blur'] || 15;    // Blur radius of the glass body
+
+    // Blur Effects
+    const preDistortionBlur = vals['pre-blur'] || 7;   // Blur applied to the background before distortion
+    const postDistortionBlur = vals['post-blur'] || 0;  // Blur applied after distortion
+
+    // Distortion Effects
+    const chromaticAberration = vals['chromatic-aberration'] || 20; // Amount of color fringing (RGB channel separation)
+
+    // --- SVG Element References ---
     const effectSvg = this.shadowRoot.getElementById("effectSvg");
-    const thing9 = this.shadowRoot.getElementById("thing9");
-    const thing0 = this.shadowRoot.getElementById("thing0");
-    const thing1 = this.shadowRoot.getElementById("thing1");
-    const thing2 = this.shadowRoot.getElementById("thing2");
+    const shadowLayer = this.shadowRoot.getElementById("shadowLayer");
+    const highlightLayer = this.shadowRoot.getElementById("highlightLayer");
+    const clipMaskLayer = this.shadowRoot.getElementById("clipMaskLayer");
+    const displacementMapLayer = this.shadowRoot.getElementById("displacementMapLayer");
     const preblur = this.shadowRoot.getElementById("preblur");
     const postblur = this.shadowRoot.getElementById("postblur");
     const dispR = this.shadowRoot.getElementById("dispR");
@@ -111,21 +152,29 @@ class LiquidGlassElement extends HTMLElement {
     const dispB = this.shadowRoot.getElementById("dispB");
     const preview = this.shadowRoot.getElementById("preview");
 
-    effectSvg.setAttribute("width", `${w}`);
-    effectSvg.setAttribute("height", `${h}`);
-    effectSvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    preview.style.width = `${w}px`;
-    preview.style.height = `${h}px`;
+    // --- Apply Settings to SVG Filters ---
+    // Update dimensions of the SVG and the preview div
+    effectSvg.setAttribute("width", `${width}`);
+    effectSvg.setAttribute("height", `${height}`);
+    effectSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    preview.style.width = `${width}px`;
+    preview.style.height = `${height}px`;
 
-    thing9.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${w}' height='${h}' viewBox='0 0 ${w} ${h}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='rgb%280 0 0 %2F${d1/2.55}%25%29' /%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='%23FFF' style='filter:blur(${d2}px)' /%3E%3C/svg%3E`);
-    thing0.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${w}' height='${h}' viewBox='0 0 ${w} ${h}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='rgb%28255 255 255 %2F${l1/2.55}%25%29' style='filter:blur(${l2}px)' /%3E%3C/svg%3E`);
-    thing1.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${w}' height='${h}' viewBox='0 0 ${w} ${h}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='%23000' /%3E%3C/svg%3E`);
-    thing2.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${w}' height='${h}' viewBox='0 0 ${w} ${h}' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradient1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%2300F'/%3E%3C/linearGradient%3E%3ClinearGradient id='gradient2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%230F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='${w}' height='${h}' rx='${r}' fill='%237F7F7F' /%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='%23000' /%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='url(%23gradient1)' style='mix-blend-mode: screen' /%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='url(%23gradient2)' style='mix-blend-mode: screen' /%3E%3Crect x='${w/4}' y='${h/4}' width='${w/2}' height='${h/2}' rx='${r}' fill='rgb%28127 127 127 %2F${(255-c1)/2.55}%25%29' style='filter:blur(${20-c2}px)' /%3E%3C/svg%3E`);
-    preblur.setAttribute("stdDeviation", `${b1/10}`);
-    postblur.setAttribute("stdDeviation", `${b2/10}`);
-    dispR.setAttribute("scale", `${-150+c4/10}`);
+    // Update the data URIs for the feImage elements with the new attribute values.
+    // These SVGs define the shapes and gradients used in the filter.
+    shadowLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='rgb%280 0 0 %2F${shadowOpacity/2.55}%25%29' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='%23FFF' style='filter:blur(${shadowBlur}px)' /%3E%3C/svg%3E`);
+    highlightLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='rgb%28255 255 255 %2F${highlightOpacity/2.55}%25%29' style='filter:blur(${highlightBlur}px)' /%3E%3C/svg%3E`);
+    clipMaskLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='%23000' /%3E%3C/svg%3E`);
+    displacementMapLayer.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `data:image/svg+xml,%3Csvg width='${width}' height='${height}' viewBox='0 0 ${width} ${height}' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradient1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%2300F'/%3E%3C/linearGradient%3E%3ClinearGradient id='gradient2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%230F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='${width}' height='${height}' rx='${radius}' fill='%237F7F7F' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='%23000' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='url(%23gradient1)' style='mix-blend-mode: screen' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='url(%23gradient2)' style='mix-blend-mode: screen' /%3E%3Crect x='${width/4}' y='${height/4}' width='${width/2}' height='${height/2}' rx='${radius}' fill='rgb%28127 127 127 %2F${(255-glassOpacity)/2.55}%25%29' style='filter:blur(${20-glassBlur}px)' /%3E%3C/svg%3E`);
+    
+    // Update blur values
+    preblur.setAttribute("stdDeviation", `${preDistortionBlur/10}`);
+    postblur.setAttribute("stdDeviation", `${postDistortionBlur/10}`);
+
+    // Update displacement scales for chromatic aberration
+    dispR.setAttribute("scale", `${-150+chromaticAberration/10}`);
     dispG.setAttribute("scale", `${-150}`);
-    dispB.setAttribute("scale", `${-150-c4/10}`);
+    dispB.setAttribute("scale", `${-150-chromaticAberration/10}`);
   }
 }
 

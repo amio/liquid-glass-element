@@ -1,0 +1,17 @@
+{
+  "name": "liquid-glass-element",
+  "version": "0.1.0",
+  "description": "A custom element for liquid glass effects.",
+  "main": "liquid-glass-element.js",
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "liquid-glass",
+    "effects"
+  ],
+  "author": "Amio <amio.cn@gmail.com>",
+  "license": "MIT"
+}

@@ -1,0 +1,30 @@
+liquid-glass-element/.npmignore
+# Exclude test files
+test/
+tests/
+*.spec.js
+*.test.js
+
+# Exclude config and build files
+*.log
+node_modules/
+npm-debug.log
+.DS_Store
+coverage/
+dist/
+build/
+.env
+.vscode/
+.idea/
+.vercel/
+*.swp
+
+# Exclude local development files
+*.local.*
+*.env.*
+
+# Exclude documentation not needed in package
+*.md
+!.README.md
+index.html
+style.css
